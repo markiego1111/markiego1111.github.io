@@ -1,48 +1,65 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <base target="_top">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk&display=swap" rel="stylesheet">
-    <style>
-      html, body {
-        margin: 0;
-        padding: 0;
-        background-color: transparent !important;
-        font-family: 'Space Grotesk', sans-serif;
-      }
-      .booking-info {
-        background-color: rgba(0, 0, 0, 0.4);
-        border-radius: 16px;
-        padding: 1.5em;
-        max-width: 600px;
-        margin: 2em auto;
-        color: white;
-      }
-      h2 {
-        color: #00f5c8;
-      }
-      .booking-info p {
-        margin: 0.5em 0;
-      }
-      .label {
-        font-weight: bold;
-        color: #ccc;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="booking-info">
-      <h2>Event Booking Summary</h2>
-      <p><span class="label">Full Name:</span> <?= data[0] ?></p>
-      <p><span class="label">Mobile:</span> <?= data[1] ?></p>
-      <p><span class="label">Entertainment Type:</span> <?= data[2] ?></p>
-      <p><span class="label">Music Styles:</span> <?= data[3] ?></p>
-      <p><span class="label">Event Date(s):</span> <?= data[4] ?></p>
-      <p><span class="label">Start Time:</span> <?= data[5] ?></p>
-      <p><span class="label">End Time:</span> <?= data[6] ?></p>
-      <p><span class="label">Frequency:</span> <?= data[7] ?></p>
-      <p><span class="label">Budget:</span> <?= data[8] ?></p>
-      <p><span class="label">Description:</span> <?= data[9] ?></p>
-    </div>
-  </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Event UK Voice Agent Demo</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Space Grotesk', sans-serif;
+      background: 
+        linear-gradient(rgba(2, 48, 51, 0.88), rgba(2, 48, 51, 0.88)),
+        url('female_dj.png') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    h1 {
+      font-size: 2.875rem;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 0.5rem;
+    }
+
+    h1 span {
+      color: #00EDDF;
+    }
+
+    p.description {
+      font-size: 1rem;
+      color: #ffffffc4;
+      margin-bottom: 2rem;
+    }
+
+    iframe {
+      width: 90%;
+      max-width: 800px;
+      height: 600px;
+      border: none;
+      border-radius: 1rem;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+    }
+  </style>
+
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <h1><span>Event UK</span> Voice Agent Demo</h1>
+  <p class="description">
+    Click below to activate a demo of the voice agent for posting an entertainment job. After call, results are posted below
+  </p>
+
+  <iframe 
+    src="https://script.google.com/macros/s/AKfycbz-Smb-HZu7irX5Rn-PDEVZUdQReUmZkudsB4FAnfDUCg4oRImwgZ9zTxx1nz3Cja3_tA/exec" 
+    allowtransparency="true">
+  </iframe>
+</body>
 </html>
