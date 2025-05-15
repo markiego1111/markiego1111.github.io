@@ -2,82 +2,72 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Event UK Voice Agent Demo</title>
-
   <style>
     body {
+      font-family: sans-serif;
+      background-color: #012c3a;
+      color: white;
       margin: 0;
       padding: 0;
-      font-family: 'Space Grotesk', sans-serif;
-      background:
-        linear-gradient(rgba(2, 48, 51, 0.88), rgba(2, 48, 51, 0.88)),
-        url('female_dj.png') no-repeat center center fixed;
-      background-size: cover;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
+      justify-content: center;
+      height: 100vh;
       text-align: center;
     }
-
-    .container {
-      width: 90%;
-      max-width: 800px;
-      padding: 3rem 1rem;
-      box-sizing: border-box;
-    }
-
     h1 {
-      font-size: 2.875rem;
-      font-weight: 800;
-      color: white;
-      margin-bottom: 1rem;
+      color: #00ffe0;
+      margin-bottom: 0.5em;
     }
-
-    h1 span {
-      color: #00EDDF;
-    }
-
-    p.description {
-      font-size: 1rem;
-      color: #ffffffc4;
-      margin-bottom: 2rem;
-      max-width: 100%;
-    }
-
-    .iframe-wrapper {
-      background: transparent;
-      display: flex;
-      justify-content: center;
-    }
-
-    iframe {
-      width: 100%;
-      height: 600px;
-      border: none;
-      border-radius: 1rem;
-      box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+    p {
+      max-width: 600px;
+      line-height: 1.6;
     }
   </style>
-
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk&display=swap" rel="stylesheet">
 </head>
-
 <body>
-  <div class="container">
-    <h1><span>Event UK</span> Voice Agent Demo</h1>
-    <p class="description">
-      Click below to activate a demo of the voice agent for posting an entertainment job. After call, results are posted below
+  <main>
+    <h1>Event UK <span style="color:white;">AI Booking Assistant</span></h1>
+    <p>
+      Click the button below to activate a short demo call with our AI voice agent.<br/>
+      <em>
+        This prototype supports limited options and validation. After the call, your test request will be emailed to Event UK.
+        For a seamless experience, data handling prompts are currently disabled.
+      </em>
     </p>
-    <div class="iframe-wrapper">
-      <iframe 
-  src="https://script.google.com/macros/s/AKfycbz-Smb-HZu7irX5Rn-PDEVZUdQReUmZkudsB4FAnfDUCg4oRImwgZ9zTxx1nz3Cja3_tA/exec" 
-  style="width: 100%; max-width: 700px; height: 600px; border: none; background: transparent;" 
-  allowtransparency="true">
-</iframe>
-    </div>
-  </div>
+  </main>
+
+  <!-- Vapi Voice Assistant Embed -->
+  <script>
+    var vapiInstance = null;
+    const assistant = "153e991a-e2aa-4c50-9722-1d583d397980"; // Your assistant ID
+    const apiKey = "ca74afab-b6a8-4182-a7e5-af34570d84fe";    // Your public API key
+    const buttonConfig = {
+      position: "right",
+      margin: "40px",
+      type: "call",
+      text: "Talk to Eve",
+    };
+
+    (function (d, t) {
+      var g = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      g.src = "https://cdn.jsdelivr.net/gh/VapiAI/html-script-tag@latest/dist/assets/index.js";
+      g.defer = true;
+      g.async = true;
+      s.parentNode.insertBefore(g, s);
+
+      g.onload = function () {
+        vapiInstance = window.vapiSDK.run({
+          apiKey,
+          assistant,
+          config: buttonConfig,
+        });
+      };
+    })(document, "script");
+  </script>
 </body>
 </html>
