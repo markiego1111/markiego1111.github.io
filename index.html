@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Event UK Demo - Entertainment Brief Generator</title>
+  <title>Event UK Demo - Source Entertainment Simulator</title>
   <style>
     body { font-family: sans-serif; margin: 2rem; background: #f9f9f9; }
     h2 { color: #333; }
@@ -15,14 +15,43 @@
       border-radius: 2rem;
       cursor: pointer;
     }
-    .tag.selected { background: #00796b; color: white; }
-    textarea { width: 100%; height: 100px; padding: 0.5rem; font-size: 1rem; }
-    button { padding: 0.75rem 2rem; font-size: 1rem; background: #00796b; color: white; border: none; cursor: pointer; }
-    .output { background: #fff; padding: 1rem; border: 1px solid #ccc; margin-top: 1rem; }
+    .tag.selected { background: #0D9487; color: white; }
+    textarea {
+      width: 100%;
+      height: 100px;
+      padding: 0.5rem;
+      font-size: 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 0.75rem 2rem;
+      font-size: 1rem;
+      background: #0D9487;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .output {
+      background: #fff;
+      padding: 1rem;
+      border: 1px solid #ccc;
+      margin-top: 1rem;
+    }
+    .helper-text {
+      color: #0D9487;
+      font-weight: bold;
+      margin-bottom: 0.25rem;
+    }
+    .hint {
+      font-size: 0.9rem;
+      color: #444;
+      margin-bottom: 1rem;
+    }
   </style>
 </head>
 <body>
-  <h2>Event UK: Entertainment Brief Generator</h2>
+  <h2>Event UK: Source Entertainment Simulator</h2>
 
   <div class="section">
     <label>Entertainment Type</label>
@@ -46,6 +75,8 @@
 
   <div class="section">
     <label>Describe your event</label>
+    <div class="helper-text">Things to include:</div>
+    <div class="hint">What's the occasion? Who's the crowd? What's the vibe? Any music genres you don't want played?</div>
     <textarea id="eventDescription" placeholder="Thursday evening, mostly young professionals..." ></textarea>
   </div>
 
