@@ -106,11 +106,34 @@
         el.className = 'tag';
         el.innerText = item;
         el.onclick = () => {
+          const selected = el.classList.contains('selected');
+          const allTags = container.querySelectorAll('.tag');
+
           if (single) {
-            container.querySelectorAll('.tag').forEach(t => t.classList.remove('selected'));
+            allTags.forEach(t => t.classList.remove('selected'));
             el.classList.add('selected');
+            return;
+          }
+
+          // Special logic for 'equipment' section only
+          if (containerId === 'equipment') {
+            if (item === 'None') {
+              // Selecting 'None' clears all others
+              allTags.forEach(t => t.classList.remove('selected'));
+              el.classList.add('selected');
+            } else {
+              // Selecting another item clears 'None'
+              const noneTag = [...allTags].find(t => t.innerText === 'None');
+              if (noneTag) noneTag.classList.remove('selected');
+
+              if (!selected) {
+                el.classList.add('selected');
+              } else {
+                el.classList.remove('selected');
+              }
+            }
           } else {
-            if (el.classList.contains('selected')) {
+            if (selected) {
               el.classList.remove('selected');
             } else {
               if (max && container.querySelectorAll('.selected').length >= max) return;
