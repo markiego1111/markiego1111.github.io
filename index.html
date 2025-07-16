@@ -1,73 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Event UK Voice Agent Demo</title>
+  <meta charset="UTF-8">
+  <title>Event UK Demo - Entertainment Brief Generator</title>
   <style>
-    body {
-      font-family: sans-serif;
-      background-color: #012c3a;
-      color: white;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      text-align: center;
+    body { font-family: sans-serif; margin: 2rem; background: #f9f9f9; }
+    h2 { color: #333; }
+    .section { margin-bottom: 2rem; }
+    .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .tag {
+      padding: 0.5rem 1rem;
+      background: #e0e0e0;
+      border-radius: 2rem;
+      cursor: pointer;
     }
-    h1 {
-      color: #00ffe0;
-      margin-bottom: 0.5em;
-    }
-    p {
-      max-width: 600px;
-      line-height: 1.6;
-    }
+    .tag.selected { background: #00796b; color: white; }
+    textarea { width: 100%; height: 100px; padding: 0.5rem; font-size: 1rem; }
+    button { padding: 0.75rem 2rem; font-size: 1rem; background: #00796b; color: white; border: none; cursor: pointer; }
+    .output { background: #fff; padding: 1rem; border: 1px solid #ccc; margin-top: 1rem; }
   </style>
 </head>
 <body>
-  <main>
-    <h1>Event UK <span style="color:white;">Vapi AI Voice Agent</span></h1>
-    <p>
-      Click the button below to activate a short demo call with our AI voice agent.<br/>
-      <em>
-        This prototype supports limited options and validation. After the call, your test request will be emailed to Event UK.
-        For a seamless experience, data handling prompts are currently disabled.
-      </em>
-    </p>
-  </main>
+  <h2>Event UK: Entertainment Brief Generator</h2>
 
-  <!-- Vapi Voice Assistant Embed -->
+  <div class="section">
+    <label><strong>Entertainment Type</strong></label>
+    <div class="tags" id="entertainmentType"></div>
+  </div>
+
+  <div class="section">
+    <label><strong>Music Style (up to 5)</strong></label>
+    <div class="tags" id="musicStyle"></div>
+  </div>
+
+  <div class="section">
+    <label><strong>DJ Style (up to 5)</strong></label>
+    <div class="tags" id="djStyle"></div>
+  </div>
+
+  <div class="section">
+    <label><strong>Equipment</strong></label>
+    <div class="tags" id="equipment"></div>
+  </div>
+
+  <div class="section">
+    <label><strong>Describe your event</strong></label>
+    <textarea id="eventDescription" placeholder="Thursday evening, mostly young professionals..." ></textarea>
+  </div>
+
+  <button onclick="submitForm()">Generate Brief</button>
+
+  <div class="output" id="outputArea"></div>
+
   <script>
-    var vapiInstance = null;
-    const assistant = "153e991a-e2aa-4c50-9722-1d583d397980"; // Your assistant ID
-    const apiKey = "ca74afab-b6a8-4182-a7e5-af34570d84fe";    // Your public API key
-    const buttonConfig = {
-      position: "right",
-      margin: "40px",
-      type: "call",
-      text: "Talk to Eve",
+    const tagData = {
+      entertainmentType: ["DJ", "Live Music", "Karaoke", "Quiz", "Tribute", "Drag", "Bingo"],
+      musicStyle: ["70s", "80s", "90s", "00s", "Current Hits", "Dance", "Electronic", "Funk", "Hip Hop", "Indie", "Motown", "Pop"],
+      djStyle: ["Personality DJ", "No Mic Work", "Some Mic Work", "Beat Mixing", "Keep 'em Dancing"],
+      equipment: ["Laptop, Decks & Mixer", "PA System", "Lights", "Full Mobile Rig", "None"]
     };
 
-    (function (d, t) {
-      var g = d.createElement(t),
-          s = d.getElementsByTagName(t)[0];
-      g.src = "https://cdn.jsdelivr.net/gh/VapiAI/html-script-tag@latest/dist/assets/index.js";
-      g.defer = true;
-      g.async = true;
-      s.parentNode.insertBefore(g, s);
+    const maxMusic = 5, maxStyle = 5;
 
-      g.onload = function () {
-        vapiInstance = window.vapiSDK.run({
-          apiKey,
-          assistant,
-          config: buttonConfig,
-        });
-      };
-    })(document, "script");
+    function renderTags(containerId, items, max = null) {
+      const container = document.getElementById(containerId);
+      items.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'tag';
+        el.innerText = item;
+        el.onclick = () => {
+          if (el.classList.contains('selected')) {
+            el.classList.remove('selected');
+          } else {
+            if (max && container.querySelectorAll('.selected').length >= max) return;
+            el.classList.add('selected');
+          }
+        };
+        container.appendChild(el);
+      });
+    }
+
+    function getSelectedText(containerId) {
+      return [...document.getElementById(containerId).querySelectorAll('.selected')].map(el => el.innerText);
+    }
+
+    function submitForm() {
+      const type = getSelectedText('entertainmentType');
+      const music = getSelectedText('musicStyle');
+      const style = getSelectedText('djStyle');
+      const equipment = getSelectedText('equipment');
+      const desc = document.getElementById('eventDescription').value || 'Thursday evening, mostly young professionals. Can potentially be outside.';
+
+      const output = `
+        <h3>Generated Brief</h3>
+        <p><strong>Title:</strong> ${type[0] || 'DJ'} for Bear and Ragged Staff</p>
+        <p><strong>Music:</strong> ${music.join(', ')}</p>
+        <p><strong>Style:</strong> ${style.join(', ')}</p>
+        <p><strong>Equipment:</strong> ${equipment.join(', ')}</p>
+        <p><strong>Description:</strong> ${desc}</p>
+      `;
+
+      document.getElementById('outputArea').innerHTML = output;
+    }
+
+    renderTags('entertainmentType', tagData.entertainmentType, 1);
+    renderTags('musicStyle', tagData.musicStyle, maxMusic);
+    renderTags('djStyle', tagData.djStyle, maxStyle);
+    renderTags('equipment', tagData.equipment);
   </script>
 </body>
 </html>
