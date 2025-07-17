@@ -4,176 +4,222 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Event UK: Source Entertainment Simulator</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+      background: #fff;
+    }
+    h1 {
+      font-size: 2rem;
+    }
+    h2 {
+      margin-top: 2rem;
+      font-size: 1.3rem;
+    }
+    .section {
+      margin-bottom: 1.5rem;
+    }
+    .pill {
+      display: inline-block;
+      border: 1px solid #ccc;
+      border-radius: 30px;
+      padding: 12px 20px;
+      margin: 5px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      background-color: white;
+    }
+    .pill.selected {
+      background-color: #0B978A;
+      color: white;
+      border-color: #0B978A;
+    }
+    .textarea {
+      width: 100%;
+      height: 120px;
+      padding: 1rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    .button {
+      padding: 12px 24px;
+      font-size: 1rem;
+      border-radius: 30px;
+      border: none;
+      cursor: pointer;
+      margin: 0.5rem 0.5rem 1rem 0;
+    }
+    .primary {
+      background-color: #0B978A;
+      color: white;
+    }
+    .secondary {
+      background-color: white;
+      color: black;
+      border: 1px solid grey;
+    }
+    .disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    .textarea-label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+    .text-muted {
+      color: #555;
+      font-weight: bold;
+    }
+    .ai-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+  </style>
 </head>
-<body class="p-8">
-  <h1 class="text-4xl font-bold mb-8">Event UK: Source Entertainment Simulator</h1>
+<body>
+  <h1>Event UK: Source Entertainment Simulator</h1>
 
-  <!-- Entertainment Type -->
-  <div class="mb-6">
-    <h2 class="text-lg font-semibold mb-2">Entertainment Type</h2>
-    <div id="entertainmentPills" class="flex flex-wrap gap-2"></div>
+  <div class="section">
+    <h2>Entertainment Type</h2>
+    <div id="entertainment"></div>
   </div>
 
-  <!-- Event Date & Time -->
-  <div class="mb-6">
-    <h2 class="text-lg font-semibold mb-2">Select Date & Time</h2>
-    <div class="flex gap-4">
-      <input type="date" id="eventDate" class="border rounded-lg p-2 w-full max-w-xs" />
-      <input type="time" id="eventTime" class="border rounded-lg p-2 w-full max-w-xs" />
+  <div class="section">
+    <h2>Select Date & Time</h2>
+    <input type="date" id="date" class="pill" />
+    <input type="time" id="time" class="pill" />
+  </div>
+
+  <div class="section">
+    <h2>Music Style (up to 5)</h2>
+    <div id="music"></div>
+  </div>
+
+  <div class="section">
+    <h2>DJ Style (up to 5)</h2>
+    <div id="dj"></div>
+  </div>
+
+  <div class="section">
+    <h2>Equipment</h2>
+    <div id="equipment"></div>
+  </div>
+
+  <div class="section">
+    <h2>Describe your event</h2>
+    <span class="text-muted">Things to include:</span> What's the occasion?, Who's the crowd?, What's the vibe?, Any music genres you don't want played?
+    <div class="ai-buttons">
+      <button class="button primary" onclick="generateAI()">✨ Help with AI</button>
+      <button class="button secondary" id="restoreBtn" onclick="restoreOriginal()" style="display:none">Restore Original</button>
     </div>
+    <textarea id="description" class="textarea" placeholder="Describe your event..."></textarea>
   </div>
 
-  <!-- Music Style -->
-  <div class="mb-6">
-    <h2 class="text-lg font-semibold mb-2">Music Style (up to 5)</h2>
-    <div id="musicStylePills" class="flex flex-wrap gap-2"></div>
-  </div>
-
-  <!-- DJ Style -->
-  <div class="mb-6">
-    <h2 class="text-lg font-semibold mb-2">DJ Style (up to 5)</h2>
-    <div id="djStylePills" class="flex flex-wrap gap-2"></div>
-  </div>
-
-  <!-- Equipment -->
-  <div class="mb-6">
-    <h2 class="text-lg font-semibold mb-2">Equipment</h2>
-    <div id="equipmentPills" class="flex flex-wrap gap-2"></div>
-  </div>
-
-  <!-- Description Section -->
-  <div class="mb-4">
-    <h2 class="text-lg font-semibold text-gray-800 mb-1">Describe your event</h2>
-    <div class="mb-2">
-      <span class="text-[#0D9487] font-medium">Things to include:</span>
-      <span class="text-gray-600 ml-2">What's the occasion?, Who's the crowd?, What's the vibe?, Any music genres you don't want played?</span>
-    </div>
-    <div class="flex flex-row items-center space-x-4 mb-2">
-      <button id="aiHelpBtn" class="flex items-center space-x-2 px-6 py-3 bg-[#0D9487] text-white rounded-full font-semibold">
-        <span id="aiIcon">✨</span>
-        <span id="aiLabel">Help with AI</span>
-      </button>
-      <button id="undoBtn" class="hidden px-6 py-3 bg-white text-black border border-gray-400 rounded-full font-semibold">
-        Restore Original
-      </button>
-    </div>
-    <textarea id="description" rows="6" class="w-full border rounded-lg p-4 text-lg placeholder-gray-400 mb-8" placeholder="Describe your event..."></textarea>
-  </div>
-
-  <!-- Next Button -->
-  <button id="nextBtn" class="bg-gray-400 text-white px-6 py-3 rounded-full font-semibold" disabled>Next</button>
+  <button id="nextBtn" class="button primary disabled" disabled>Next</button>
 
   <script>
-    const sections = {
-      entertainmentPills: {
-        options: ["DJ", "Live Music", "Karaoke", "Quiz", "Tribute", "Drag", "Bingo", "Childrens Entertainer", "Bandeoke", "Magician", "Open Mic Host", "Poker", "Comedy", "Santa"],
-        max: 1,
-        toggleOff: true
-      },
-      musicStylePills: {
-        options: ["70s", "80s", "90s", "00s", "Current Hits", "Britpop", "Dance", "Disco", "Electronic", "Funk", "Hip Hop", "House", "Indie", "Motown", "Pop", "R&B", "Rock", "Soul"],
-        max: 5
-      },
-      djStylePills: {
-        options: ["Personality DJ", "No Mic Work", "Some Mic Work", "No Requests", "Take Requests", "Beat Mixing", "Keep 'em Singing", "Keep 'em Dancing", "Older Audience", "Younger Audience", "None"],
-        max: 5
-      },
-      equipmentPills: {
-        options: ["Laptop, Decks & Mixer", "PA System", "Lights", "Full Mobile Rig", "None"],
-        max: null,
-        noneToggle: true
-      }
-    };
+    const entertainmentTypes = ["DJ", "Live Music", "Karaoke", "Quiz", "Tribute", "Drag", "Bingo", "Childrens Entertainer", "Bandeoke", "Magician", "Open Mic Host", "Poker", "Comedy", "Santa"];
+    const musicStyles = ["70s", "80s", "90s", "00s", "Current Hits", "Britpop", "Dance", "Disco", "Electronic", "Funk", "Hip Hop", "House", "Indie", "Motown", "Pop", "R&B", "Rock", "Soul"];
+    const djStyles = ["Personality DJ", "No Mic Work", "Some Mic Work", "No Requests", "Take Requests", "Beat Mixing", "Keep 'em Singing", "Keep 'em Dancing", "Older Audience", "Younger Audience", "None"];
+    const equipmentOptions = ["Laptop, Decks & Mixer", "PA System", "Lights", "Full Mobile Rig", "None"];
 
-    const selected = {
-      entertainmentPills: [],
-      musicStylePills: [],
-      djStylePills: [],
-      equipmentPills: []
-    };
+    let selectedEntertainment = null;
+    let selectedMusic = [];
+    let selectedDJ = [];
+    let selectedEquipment = [];
+    let originalDescription = "";
 
-    const nextBtn = document.getElementById('nextBtn');
+    const maxMusic = 5;
+    const maxDJ = 5;
 
-    function renderPills(sectionId, config) {
-      const container = document.getElementById(sectionId);
-      config.options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.textContent = opt;
-        btn.className = 'px-4 py-2 rounded-full border border-gray-400 text-black';
-        btn.addEventListener('click', () => {
-          const isSelected = selected[sectionId].includes(opt);
-
-          if (sectionId === 'entertainmentPills') {
-            if (isSelected && config.toggleOff) {
-              selected[sectionId] = [];
-            } else {
-              selected[sectionId] = [opt];
-            }
-          } else if (sectionId === 'equipmentPills') {
-            if (opt === 'None') {
-              selected[sectionId] = ['None'];
-            } else {
-              selected[sectionId] = selected[sectionId].filter(v => v !== 'None');
-              if (!isSelected) selected[sectionId].push(opt);
-              else selected[sectionId] = selected[sectionId].filter(v => v !== opt);
-            }
-          } else {
-            if (isSelected) {
-              selected[sectionId] = selected[sectionId].filter(v => v !== opt);
-            } else {
-              if (config.max == null || selected[sectionId].length < config.max) {
-                selected[sectionId].push(opt);
-              }
-            }
-          }
-          renderPills(sectionId, config);
-          validateNext();
-        });
-        if (selected[sectionId].includes(opt)) {
-          btn.classList.add('bg-[#0D9487]', 'text-white');
-        }
-        container.appendChild(btn);
+    function renderPills(id, list, selected, callback) {
+      const container = document.getElementById(id);
+      container.innerHTML = "";
+      list.forEach(item => {
+        const pill = document.createElement("div");
+        pill.className = "pill" + (selected.includes(item) ? " selected" : "");
+        pill.textContent = item;
+        pill.onclick = () => callback(item);
+        container.appendChild(pill);
       });
     }
 
-    function validateNext() {
-      const allFilled = Object.keys(sections).every(key => selected[key].length > 0);
-      nextBtn.disabled = !allFilled;
-      nextBtn.className = allFilled ? 'bg-[#0D9487] text-white px-6 py-3 rounded-full font-semibold' : 'bg-gray-400 text-white px-6 py-3 rounded-full font-semibold';
+    function toggleEntertainment(item) {
+      selectedEntertainment = selectedEntertainment === item ? null : item;
+      renderAll();
+      validateNext();
     }
 
-    Object.keys(sections).forEach(key => renderPills(key, sections[key]));
+    function makeToggleCallback(getter, setter, max) {
+      return function(item) {
+        let selectedList = getter();
+        const index = selectedList.indexOf(item);
+        if (index >= 0) {
+          selectedList.splice(index, 1);
+        } else if (selectedList.length < max) {
+          selectedList.push(item);
+        }
+        setter([...selectedList]);
+        renderAll();
+        validateNext();
+      };
+    }
 
-    // AI Help Button Logic
-    const aiHelpBtn = document.getElementById('aiHelpBtn');
-    const undoBtn = document.getElementById('undoBtn');
-    const descriptionBox = document.getElementById('description');
-    const aiIcon = document.getElementById('aiIcon');
-    const aiLabel = document.getElementById('aiLabel');
-    let aiOriginalText = '';
+    function toggleEquipment(item) {
+      if (item === "None") {
+        selectedEquipment = ["None"];
+      } else {
+        selectedEquipment = selectedEquipment.filter(i => i !== "None");
+        if (selectedEquipment.includes(item)) {
+          selectedEquipment = selectedEquipment.filter(i => i !== item);
+        } else {
+          selectedEquipment.push(item);
+        }
+      }
+      renderAll();
+      validateNext();
+    }
 
-    aiHelpBtn.addEventListener('click', () => {
-      if (!aiOriginalText) aiOriginalText = descriptionBox.value;
+    function setSelectedMusic(list) { selectedMusic = list; }
+    function getSelectedMusic() { return selectedMusic; }
+    function setSelectedDJ(list) { selectedDJ = list; }
+    function getSelectedDJ() { return selectedDJ; }
 
-      aiIcon.innerHTML = '';
-      aiIcon.className = 'h-4 w-4 rounded-full border-2 border-t-transparent border-white animate-spin';
-      aiLabel.textContent = 'Generating...';
+    function validateNext() {
+      const next = document.getElementById("nextBtn");
+      if (selectedEntertainment && selectedMusic.length > 0 && selectedDJ.length > 0 && selectedEquipment.length > 0) {
+        next.classList.remove("disabled");
+        next.disabled = false;
+      } else {
+        next.classList.add("disabled");
+        next.disabled = true;
+      }
+    }
 
-      setTimeout(() => {
-        descriptionBox.value = "Thursday evening, mostly young professionals...";
-        aiIcon.className = '';
-        aiIcon.innerHTML = '✨';
-        aiLabel.textContent = 'Help with AI';
-        undoBtn.classList.remove('hidden');
-      }, 1500);
-    });
+    function generateAI() {
+      originalDescription = document.getElementById("description").value;
+      document.getElementById("description").value = "Young professionals, looking for upbeat music and good vibes. Please avoid heavy metal.";
+      document.getElementById("restoreBtn").style.display = "inline-block";
+    }
 
-    undoBtn.addEventListener('click', () => {
-      descriptionBox.value = aiOriginalText;
-      aiOriginalText = '';
-      undoBtn.classList.add('hidden');
-    });
+    function restoreOriginal() {
+      document.getElementById("description").value = originalDescription;
+      document.getElementById("restoreBtn").style.display = "none";
+    }
+
+    function renderAll() {
+      renderPills("entertainment", entertainmentTypes, selectedEntertainment ? [selectedEntertainment] : [], toggleEntertainment);
+      renderPills("music", musicStyles, selectedMusic, makeToggleCallback(getSelectedMusic, setSelectedMusic, maxMusic));
+      renderPills("dj", djStyles, selectedDJ, makeToggleCallback(getSelectedDJ, setSelectedDJ, maxDJ));
+      renderPills("equipment", equipmentOptions, selectedEquipment, toggleEquipment);
+    }
+
+    renderAll();
   </script>
 </body>
 </html>
