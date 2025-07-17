@@ -202,10 +202,9 @@
     }
 
     function generateAI() {
-      originalDescription = document.getElementById("description").value;
-      document.getElementById("description").value = "Young professionals, looking for upbeat music and good vibes. Please avoid heavy metal.";
-      document.getElementById("restoreBtn").style.display = "inline-block";
-    }
+  originalDescription = document.getElementById("description").value;
+  callGeminiAI();
+}
 
     function restoreOriginal() {
       document.getElementById("description").value = originalDescription;
@@ -220,6 +219,59 @@
     }
 
     renderAll();
+
+function callGeminiAI() {
+  const descriptionBox = document.getElementById("description");
+  const restoreBtn = document.getElementById("restoreBtn");
+  const entertainment = selectedEntertainment;
+  const music = selectedMusic.join(", ");
+  const dj = selectedDJ.join(", ");
+  const userText = descriptionBox.value;
+
+  const prompt = `
+You are generating event listings for a professional entertainment booking app.
+Based on the input provided, generate:
+1. A title (max 110 characters) – clear, professional, and punchy
+2. A description – factual, concise, and informative
+
+Avoid assumptions about the venue, crowd, or vibe unless explicitly stated. Do not repeat the event date, time, price, or location. Mention music genres or styles where relevant. Keep tone professional but engaging.
+
+Use all available inputs:
+• entertainment type
+• music style
+• DJ style
+• user-provided description (if any)
+
+If no user description is given, generate using only the structured fields.
+
+Entertainment Type: ${entertainment}
+Music Style: ${music}
+DJ Style: ${dj}
+User Description: ${userText || "*None*"}
+`;
+
+  fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyAvZdDYAE1YsdxdWdTqNhfp9sw917S4FTE", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }]
+    })
+  })
+    .then(res => res.json())
+    .then(data => {
+      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+      if (text && text.length > 0) {
+        descriptionBox.value = text;
+      } else {
+        descriptionBox.value = "Apologies, can't connect right now. Please try later.";
+      }
+      restoreBtn.style.display = "inline-block";
+    })
+    .catch(error => {
+      console.error("Gemini API error:", error);
+      descriptionBox.value = "Apologies, can't connect right now. Please try later.";
+    });
+}
   </script>
 </body>
 </html>
