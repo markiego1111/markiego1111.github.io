@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Event UK Demo - Source Entertainment Simulator</title>
   <style>
     body { font-family: sans-serif; margin: 2rem; background: #f9f9f9; }
@@ -21,9 +22,8 @@
       color: white;
       border-color: #0D9487;
     }
-    textarea {
+    textarea, select, input[type="date"] {
       width: 100%;
-      height: 100px;
       padding: 0.5rem;
       font-size: 1rem;
       border-radius: 0.5rem;
@@ -61,6 +61,16 @@
   <div class="section">
     <label>Entertainment Type</label>
     <div class="tags" id="entertainmentType"></div>
+  </div>
+
+  <div class="section">
+    <label>Event Date</label>
+    <input type="date" id="eventDate">
+  </div>
+
+  <div class="section">
+    <label>Start Time</label>
+    <select id="startTime"></select>
   </div>
 
   <div class="section">
@@ -115,14 +125,11 @@
             return;
           }
 
-          // Special logic for 'equipment' section only
           if (containerId === 'equipment') {
             if (item === 'None') {
-              // Selecting 'None' clears all others
               allTags.forEach(t => t.classList.remove('selected'));
               el.classList.add('selected');
             } else {
-              // Selecting another item clears 'None'
               const noneTag = [...allTags].find(t => t.innerText === 'None');
               if (noneTag) noneTag.classList.remove('selected');
 
@@ -145,12 +152,28 @@
       });
     }
 
+    function populateTimeOptions() {
+      const select = document.getElementById("startTime");
+      for (let h = 0; h < 24; h++) {
+        for (let m = 0; m < 60; m += 15) {
+          const hr = h.toString().padStart(2, '0');
+          const min = m.toString().padStart(2, '0');
+          const option = document.createElement("option");
+          option.value = `${hr}:${min}`;
+          option.textContent = `${hr}:${min}`;
+          select.appendChild(option);
+        }
+      }
+    }
+
     function getSelectedText(containerId) {
       return [...document.getElementById(containerId).querySelectorAll('.selected')].map(el => el.innerText);
     }
 
     function submitForm() {
       const type = getSelectedText('entertainmentType');
+      const date = document.getElementById('eventDate').value;
+      const startTime = document.getElementById('startTime').value;
       const music = getSelectedText('musicStyle');
       const style = getSelectedText('djStyle');
       const equipment = getSelectedText('equipment');
@@ -159,6 +182,8 @@
       const output = `
         <h3>Generated Brief</h3>
         <p><strong>Title:</strong> ${type[0] || 'DJ'} for Bear and Ragged Staff</p>
+        <p><strong>Date:</strong> ${date}</p>
+        <p><strong>Start Time:</strong> ${startTime}</p>
         <p><strong>Music:</strong> ${music.join(', ')}</p>
         <p><strong>Style:</strong> ${style.join(', ')}</p>
         <p><strong>Equipment:</strong> ${equipment.join(', ')}</p>
@@ -172,6 +197,7 @@
     renderTags('musicStyle', tagData.musicStyle, maxMusic);
     renderTags('djStyle', tagData.djStyle, maxStyle);
     renderTags('equipment', tagData.equipment);
+    populateTimeOptions();
   </script>
 </body>
 </html>
