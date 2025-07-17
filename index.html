@@ -1,203 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Event UK Demo - Source Entertainment Simulator</title>
-  <style>
-    body { font-family: sans-serif; margin: 2rem; background: #f9f9f9; }
-    h2 { color: #333; }
-    .section { margin-bottom: 2.5rem; }
-    label { display: block; font-weight: bold; margin-bottom: 1rem; }
-    .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-    .tag {
-      padding: 0.5rem 1rem;
-      background: #fff;
-      border: 1px solid #ccc;
-      border-radius: 2rem;
-      cursor: pointer;
-    }
-    .tag.selected {
-      background: #0D9487;
-      color: white;
-      border-color: #0D9487;
-    }
-    textarea, select, input[type="date"] {
-      width: 100%;
-      padding: 0.5rem;
-      font-size: 1rem;
-      border-radius: 0.5rem;
-      border: 1px solid #ccc;
-    }
-    button {
-      padding: 0.75rem 2rem;
-      font-size: 1rem;
-      background: #0D9487;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    .output {
-      background: #fff;
-      padding: 1rem;
-      border: 1px solid #ccc;
-      margin-top: 1rem;
-    }
-    .helper-text {
-      color: #0D9487;
-      font-weight: bold;
-      margin-bottom: 0.25rem;
-    }
-    .hint {
-      font-size: 0.9rem;
-      color: #444;
-      margin-bottom: 1rem;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Event UK: Source Entertainment Simulator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <h2>Event UK: Source Entertainment Simulator</h2>
+<body class="p-10">
+  <h1 class="text-4xl font-bold mb-8">Event UK: Source Entertainment Simulator</h1>
 
-  <div class="section">
-    <label>Entertainment Type</label>
-    <div class="tags" id="entertainmentType"></div>
+  <!-- Entertainment Type -->
+  <div>
+    <h2 class="text-xl font-semibold mb-2">Entertainment Type</h2>
+    <div id="entertainmentType" class="flex flex-wrap gap-2 mb-6"></div>
   </div>
 
-  <div class="section">
-    <label>Event Date</label>
-    <input type="date" id="eventDate">
+  <!-- Select Date & Time -->
+  <div>
+    <h2 class="text-xl font-semibold mb-2">Select Date & Time</h2>
+    <div class="flex flex-row gap-4 mb-6">
+      <input type="date" id="eventDate" class="w-1/2 p-3 border rounded" />
+      <input type="time" id="eventTime" class="w-1/2 p-3 border rounded" />
+    </div>
   </div>
 
-  <div class="section">
-    <label>Start Time</label>
-    <select id="startTime"></select>
+  <!-- Music Style -->
+  <div>
+    <h2 class="text-xl font-semibold mb-2">Music Style (up to 5)</h2>
+    <div id="musicStyle" class="flex flex-wrap gap-2 mb-6"></div>
   </div>
 
-  <div class="section">
-    <label>Music Style (up to 5)</label>
-    <div class="tags" id="musicStyle"></div>
+  <!-- DJ Style -->
+  <div>
+    <h2 class="text-xl font-semibold mb-2">DJ Style (up to 5)</h2>
+    <div id="djStyle" class="flex flex-wrap gap-2 mb-6"></div>
   </div>
 
-  <div class="section">
-    <label>DJ Style (up to 5)</label>
-    <div class="tags" id="djStyle"></div>
+  <!-- Equipment -->
+  <div>
+    <h2 class="text-xl font-semibold mb-2">Equipment</h2>
+    <div id="equipment" class="flex flex-wrap gap-2 mb-6"></div>
   </div>
 
-  <div class="section">
-    <label>Equipment</label>
-    <div class="tags" id="equipment"></div>
+  <!-- Help with AI Button -->
+  <div class="mb-4">
+    <button id="aiHelpBtn" class="flex items-center space-x-2 px-6 py-3 bg-[#0D9487] text-white rounded-full font-semibold">
+      <span id="aiIcon">✨</span>
+      <span id="aiLabel">Help with AI</span>
+    </button>
   </div>
 
-  <div class="section">
-    <label>Describe your event</label>
-    <div class="helper-text">Things to include:</div>
-    <div class="hint">What's the occasion? Who's the crowd? What's the vibe? Any music genres you don't want played?</div>
-    <textarea id="eventDescription" placeholder="Thursday evening, mostly young professionals..." ></textarea>
+  <!-- Description -->
+  <label class="block text-lg font-semibold text-gray-800 mb-1">Describe your event</label>
+  <div class="mb-2">
+    <span class="text-[#0D9487] font-medium">Things to include:</span>
+    <span class="text-gray-600 ml-2">What's the occasion?, Who's the crowd?, What's the vibe?, Any music genres you don't want played?</span>
   </div>
+  <textarea id="description" rows="6" class="w-full border rounded-lg p-4 text-lg placeholder-gray-400 mb-8" placeholder="Describe your event..."></textarea>
 
-  <button onclick="submitForm()">Generate Brief</button>
-
-  <div class="output" id="outputArea"></div>
+  <!-- Next Button -->
+  <button id="nextBtn" class="px-6 py-3 bg-gray-400 text-white font-semibold rounded-full cursor-not-allowed" disabled>Next</button>
 
   <script>
-    const tagData = {
+    const categories = {
       entertainmentType: ["DJ", "Live Music", "Karaoke", "Quiz", "Tribute", "Drag", "Bingo", "Childrens Entertainer", "Bandeoke", "Magician", "Open Mic Host", "Poker", "Comedy", "Santa"],
       musicStyle: ["70s", "80s", "90s", "00s", "Current Hits", "Britpop", "Dance", "Disco", "Electronic", "Funk", "Hip Hop", "House", "Indie", "Motown", "Pop", "R&B", "Rock", "Soul"],
       djStyle: ["Personality DJ", "No Mic Work", "Some Mic Work", "No Requests", "Take Requests", "Beat Mixing", "Keep 'em Singing", "Keep 'em Dancing", "Older Audience", "Younger Audience", "None"],
       equipment: ["Laptop, Decks & Mixer", "PA System", "Lights", "Full Mobile Rig", "None"]
     };
 
-    const maxMusic = 5, maxStyle = 5;
+    const state = {
+      entertainmentType: [],
+      musicStyle: [],
+      djStyle: [],
+      equipment: []
+    };
 
-    function renderTags(containerId, items, max = null, single = false) {
+    function renderPills(containerId, options, max = null, allowNone = false) {
       const container = document.getElementById(containerId);
-      items.forEach(item => {
-        const el = document.createElement('div');
-        el.className = 'tag';
-        el.innerText = item;
-        el.onclick = () => {
-          const selected = el.classList.contains('selected');
-          const allTags = container.querySelectorAll('.tag');
+      container.innerHTML = '';
+      options.forEach(option => {
+        const pill = document.createElement('button');
+        pill.textContent = option;
+        pill.className = 'px-4 py-2 border border-gray-300 rounded-full text-sm';
+        pill.addEventListener('click', () => {
+          const selected = state[containerId];
 
-          if (single) {
-            allTags.forEach(t => t.classList.remove('selected'));
-            el.classList.add('selected');
-            return;
-          }
-
-          if (containerId === 'equipment') {
-            if (item === 'None') {
-              allTags.forEach(t => t.classList.remove('selected'));
-              el.classList.add('selected');
+          if (containerId === 'entertainmentType') {
+            if (selected[0] === option) {
+              selected.length = 0;
             } else {
-              const noneTag = [...allTags].find(t => t.innerText === 'None');
-              if (noneTag) noneTag.classList.remove('selected');
-
-              if (!selected) {
-                el.classList.add('selected');
+              selected.length = 0;
+              selected.push(option);
+            }
+          } else if (containerId === 'equipment') {
+            if (option === 'None') {
+              state.equipment = ['None'];
+            } else {
+              const index = selected.indexOf(option);
+              if (index > -1) {
+                selected.splice(index, 1);
               } else {
-                el.classList.remove('selected');
+                selected.push(option);
               }
+              state.equipment = state.equipment.filter(e => e !== 'None');
             }
           } else {
-            if (selected) {
-              el.classList.remove('selected');
+            const index = selected.indexOf(option);
+            if (index > -1) {
+              selected.splice(index, 1);
             } else {
-              if (max && container.querySelectorAll('.selected').length >= max) return;
-              el.classList.add('selected');
+              if (!max || selected.length < max) {
+                selected.push(option);
+              }
             }
           }
-        };
-        container.appendChild(el);
+
+          updateUI();
+        });
+        container.appendChild(pill);
       });
     }
 
-    function populateTimeOptions() {
-      const select = document.getElementById("startTime");
-      for (let h = 0; h < 24; h++) {
-        for (let m = 0; m < 60; m += 15) {
-          const hr = h.toString().padStart(2, '0');
-          const min = m.toString().padStart(2, '0');
-          const option = document.createElement("option");
-          option.value = `${hr}:${min}`;
-          option.textContent = `${hr}:${min}`;
-          select.appendChild(option);
+    function updateUI() {
+      ['entertainmentType', 'musicStyle', 'djStyle', 'equipment'].forEach(section => {
+        const pills = document.getElementById(section).children;
+        for (const pill of pills) {
+          const selected = state[section].includes(pill.textContent);
+          pill.className = selected
+            ? 'px-4 py-2 rounded-full text-sm bg-[#0D9487] text-white'
+            : 'px-4 py-2 border border-gray-300 rounded-full text-sm';
         }
-      }
+      });
+
+      const nextBtn = document.getElementById('nextBtn');
+      const ready = state.entertainmentType.length > 0 && state.musicStyle.length > 0 && state.djStyle.length > 0 && state.equipment.length > 0;
+      nextBtn.disabled = !ready;
+      nextBtn.className = ready
+        ? 'px-6 py-3 bg-[#0D9487] text-white font-semibold rounded-full cursor-pointer'
+        : 'px-6 py-3 bg-gray-400 text-white font-semibold rounded-full cursor-not-allowed';
     }
 
-    function getSelectedText(containerId) {
-      return [...document.getElementById(containerId).querySelectorAll('.selected')].map(el => el.innerText);
-    }
+    renderPills('entertainmentType', categories.entertainmentType);
+    renderPills('musicStyle', categories.musicStyle, 5);
+    renderPills('djStyle', categories.djStyle, 5);
+    renderPills('equipment', categories.equipment);
+    updateUI();
 
-    function submitForm() {
-      const type = getSelectedText('entertainmentType');
-      const date = document.getElementById('eventDate').value;
-      const startTime = document.getElementById('startTime').value;
-      const music = getSelectedText('musicStyle');
-      const style = getSelectedText('djStyle');
-      const equipment = getSelectedText('equipment');
-      const desc = document.getElementById('eventDescription').value || 'Thursday evening, mostly young professionals. Can potentially be outside.';
+    const aiHelpBtn = document.getElementById('aiHelpBtn');
+    const aiIcon = document.getElementById('aiIcon');
+    const aiLabel = document.getElementById('aiLabel');
+    const descriptionBox = document.getElementById('description');
+    let aiOriginalText = '';
 
-      const output = `
-        <h3>Generated Brief</h3>
-        <p><strong>Title:</strong> ${type[0] || 'DJ'} for Bear and Ragged Staff</p>
-        <p><strong>Date:</strong> ${date}</p>
-        <p><strong>Start Time:</strong> ${startTime}</p>
-        <p><strong>Music:</strong> ${music.join(', ')}</p>
-        <p><strong>Style:</strong> ${style.join(', ')}</p>
-        <p><strong>Equipment:</strong> ${equipment.join(', ')}</p>
-        <p><strong>Description:</strong> ${desc}</p>
-      `;
+    aiHelpBtn.addEventListener('click', () => {
+      if (!aiOriginalText) aiOriginalText = descriptionBox.value;
 
-      document.getElementById('outputArea').innerHTML = output;
-    }
+      aiIcon.innerHTML = '';
+      aiIcon.className = 'h-4 w-4 rounded-full border-2 border-t-transparent border-white animate-spin';
+      aiLabel.textContent = 'Generating...';
 
-    renderTags('entertainmentType', tagData.entertainmentType, 1, true);
-    renderTags('musicStyle', tagData.musicStyle, maxMusic);
-    renderTags('djStyle', tagData.djStyle, maxStyle);
-    renderTags('equipment', tagData.equipment);
-    populateTimeOptions();
+      setTimeout(() => {
+        descriptionBox.value = 'A vibrant Thursday evening crowd with young professionals, upbeat and modern vibes.';
+        aiIcon.className = '';
+        aiIcon.innerHTML = '✨';
+        aiLabel.textContent = 'Help with AI';
+      }, 1500);
+    });
   </script>
 </body>
 </html>
