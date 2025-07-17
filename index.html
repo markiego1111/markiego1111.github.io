@@ -6,151 +6,151 @@
   <title>Event UK: Source Entertainment Simulator</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="p-10">
+<body class="p-8">
   <h1 class="text-4xl font-bold mb-8">Event UK: Source Entertainment Simulator</h1>
 
   <!-- Entertainment Type -->
-  <div>
-    <h2 class="text-xl font-semibold mb-2">Entertainment Type</h2>
-    <div id="entertainmentType" class="flex flex-wrap gap-2 mb-6"></div>
+  <div class="mb-6">
+    <h2 class="text-lg font-semibold mb-2">Entertainment Type</h2>
+    <div id="entertainmentPills" class="flex flex-wrap gap-2"></div>
   </div>
 
-  <!-- Select Date & Time -->
-  <div>
-    <h2 class="text-xl font-semibold mb-2">Select Date & Time</h2>
-    <div class="flex flex-row gap-4 mb-6">
-      <input type="date" id="eventDate" class="w-1/2 p-3 border rounded" />
-      <input type="time" id="eventTime" class="w-1/2 p-3 border rounded" />
+  <!-- Event Date & Time -->
+  <div class="mb-6">
+    <h2 class="text-lg font-semibold mb-2">Select Date & Time</h2>
+    <div class="flex gap-4">
+      <input type="date" id="eventDate" class="border rounded-lg p-2 w-full max-w-xs" />
+      <input type="time" id="eventTime" class="border rounded-lg p-2 w-full max-w-xs" />
     </div>
   </div>
 
   <!-- Music Style -->
-  <div>
-    <h2 class="text-xl font-semibold mb-2">Music Style (up to 5)</h2>
-    <div id="musicStyle" class="flex flex-wrap gap-2 mb-6"></div>
+  <div class="mb-6">
+    <h2 class="text-lg font-semibold mb-2">Music Style (up to 5)</h2>
+    <div id="musicStylePills" class="flex flex-wrap gap-2"></div>
   </div>
 
   <!-- DJ Style -->
-  <div>
-    <h2 class="text-xl font-semibold mb-2">DJ Style (up to 5)</h2>
-    <div id="djStyle" class="flex flex-wrap gap-2 mb-6"></div>
+  <div class="mb-6">
+    <h2 class="text-lg font-semibold mb-2">DJ Style (up to 5)</h2>
+    <div id="djStylePills" class="flex flex-wrap gap-2"></div>
   </div>
 
   <!-- Equipment -->
-  <div>
-    <h2 class="text-xl font-semibold mb-2">Equipment</h2>
-    <div id="equipment" class="flex flex-wrap gap-2 mb-6"></div>
+  <div class="mb-6">
+    <h2 class="text-lg font-semibold mb-2">Equipment</h2>
+    <div id="equipmentPills" class="flex flex-wrap gap-2"></div>
   </div>
 
-  <!-- Help with AI Button -->
+  <!-- Description Section -->
   <div class="mb-4">
-    <button id="aiHelpBtn" class="flex items-center space-x-2 px-6 py-3 bg-[#0D9487] text-white rounded-full font-semibold">
-      <span id="aiIcon">✨</span>
-      <span id="aiLabel">Help with AI</span>
-    </button>
+    <h2 class="text-lg font-semibold text-gray-800 mb-1">Describe your event</h2>
+    <div class="mb-2">
+      <span class="text-[#0D9487] font-medium">Things to include:</span>
+      <span class="text-gray-600 ml-2">What's the occasion?, Who's the crowd?, What's the vibe?, Any music genres you don't want played?</span>
+    </div>
+    <div class="flex flex-row items-center space-x-4 mb-2">
+      <button id="aiHelpBtn" class="flex items-center space-x-2 px-6 py-3 bg-[#0D9487] text-white rounded-full font-semibold">
+        <span id="aiIcon">✨</span>
+        <span id="aiLabel">Help with AI</span>
+      </button>
+      <button id="undoBtn" class="hidden px-6 py-3 bg-white text-black border border-gray-400 rounded-full font-semibold">
+        Restore Original
+      </button>
+    </div>
+    <textarea id="description" rows="6" class="w-full border rounded-lg p-4 text-lg placeholder-gray-400 mb-8" placeholder="Describe your event..."></textarea>
   </div>
-
-  <!-- Description -->
-  <label class="block text-lg font-semibold text-gray-800 mb-1">Describe your event</label>
-  <div class="mb-2">
-    <span class="text-[#0D9487] font-medium">Things to include:</span>
-    <span class="text-gray-600 ml-2">What's the occasion?, Who's the crowd?, What's the vibe?, Any music genres you don't want played?</span>
-  </div>
-  <textarea id="description" rows="6" class="w-full border rounded-lg p-4 text-lg placeholder-gray-400 mb-8" placeholder="Describe your event..."></textarea>
 
   <!-- Next Button -->
-  <button id="nextBtn" class="px-6 py-3 bg-gray-400 text-white font-semibold rounded-full cursor-not-allowed" disabled>Next</button>
+  <button id="nextBtn" class="bg-gray-400 text-white px-6 py-3 rounded-full font-semibold" disabled>Next</button>
 
   <script>
-    const categories = {
-      entertainmentType: ["DJ", "Live Music", "Karaoke", "Quiz", "Tribute", "Drag", "Bingo", "Childrens Entertainer", "Bandeoke", "Magician", "Open Mic Host", "Poker", "Comedy", "Santa"],
-      musicStyle: ["70s", "80s", "90s", "00s", "Current Hits", "Britpop", "Dance", "Disco", "Electronic", "Funk", "Hip Hop", "House", "Indie", "Motown", "Pop", "R&B", "Rock", "Soul"],
-      djStyle: ["Personality DJ", "No Mic Work", "Some Mic Work", "No Requests", "Take Requests", "Beat Mixing", "Keep 'em Singing", "Keep 'em Dancing", "Older Audience", "Younger Audience", "None"],
-      equipment: ["Laptop, Decks & Mixer", "PA System", "Lights", "Full Mobile Rig", "None"]
+    const sections = {
+      entertainmentPills: {
+        options: ["DJ", "Live Music", "Karaoke", "Quiz", "Tribute", "Drag", "Bingo", "Childrens Entertainer", "Bandeoke", "Magician", "Open Mic Host", "Poker", "Comedy", "Santa"],
+        max: 1,
+        toggleOff: true
+      },
+      musicStylePills: {
+        options: ["70s", "80s", "90s", "00s", "Current Hits", "Britpop", "Dance", "Disco", "Electronic", "Funk", "Hip Hop", "House", "Indie", "Motown", "Pop", "R&B", "Rock", "Soul"],
+        max: 5
+      },
+      djStylePills: {
+        options: ["Personality DJ", "No Mic Work", "Some Mic Work", "No Requests", "Take Requests", "Beat Mixing", "Keep 'em Singing", "Keep 'em Dancing", "Older Audience", "Younger Audience", "None"],
+        max: 5
+      },
+      equipmentPills: {
+        options: ["Laptop, Decks & Mixer", "PA System", "Lights", "Full Mobile Rig", "None"],
+        max: null,
+        noneToggle: true
+      }
     };
 
-    const state = {
-      entertainmentType: [],
-      musicStyle: [],
-      djStyle: [],
-      equipment: []
+    const selected = {
+      entertainmentPills: [],
+      musicStylePills: [],
+      djStylePills: [],
+      equipmentPills: []
     };
 
-    function renderPills(containerId, options, max = null, allowNone = false) {
-      const container = document.getElementById(containerId);
-      container.innerHTML = '';
-      options.forEach(option => {
-        const pill = document.createElement('button');
-        pill.textContent = option;
-        pill.className = 'px-4 py-2 border border-gray-300 rounded-full text-sm';
-        pill.addEventListener('click', () => {
-          const selected = state[containerId];
+    const nextBtn = document.getElementById('nextBtn');
 
-          if (containerId === 'entertainmentType') {
-            if (selected[0] === option) {
-              selected.length = 0;
+    function renderPills(sectionId, config) {
+      const container = document.getElementById(sectionId);
+      config.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.textContent = opt;
+        btn.className = 'px-4 py-2 rounded-full border border-gray-400 text-black';
+        btn.addEventListener('click', () => {
+          const isSelected = selected[sectionId].includes(opt);
+
+          if (sectionId === 'entertainmentPills') {
+            if (isSelected && config.toggleOff) {
+              selected[sectionId] = [];
             } else {
-              selected.length = 0;
-              selected.push(option);
+              selected[sectionId] = [opt];
             }
-          } else if (containerId === 'equipment') {
-            if (option === 'None') {
-              state.equipment = ['None'];
+          } else if (sectionId === 'equipmentPills') {
+            if (opt === 'None') {
+              selected[sectionId] = ['None'];
             } else {
-              const index = selected.indexOf(option);
-              if (index > -1) {
-                selected.splice(index, 1);
-              } else {
-                selected.push(option);
-              }
-              state.equipment = state.equipment.filter(e => e !== 'None');
+              selected[sectionId] = selected[sectionId].filter(v => v !== 'None');
+              if (!isSelected) selected[sectionId].push(opt);
+              else selected[sectionId] = selected[sectionId].filter(v => v !== opt);
             }
           } else {
-            const index = selected.indexOf(option);
-            if (index > -1) {
-              selected.splice(index, 1);
+            if (isSelected) {
+              selected[sectionId] = selected[sectionId].filter(v => v !== opt);
             } else {
-              if (!max || selected.length < max) {
-                selected.push(option);
+              if (config.max == null || selected[sectionId].length < config.max) {
+                selected[sectionId].push(opt);
               }
             }
           }
-
-          updateUI();
+          renderPills(sectionId, config);
+          validateNext();
         });
-        container.appendChild(pill);
-      });
-    }
-
-    function updateUI() {
-      ['entertainmentType', 'musicStyle', 'djStyle', 'equipment'].forEach(section => {
-        const pills = document.getElementById(section).children;
-        for (const pill of pills) {
-          const selected = state[section].includes(pill.textContent);
-          pill.className = selected
-            ? 'px-4 py-2 rounded-full text-sm bg-[#0D9487] text-white'
-            : 'px-4 py-2 border border-gray-300 rounded-full text-sm';
+        if (selected[sectionId].includes(opt)) {
+          btn.classList.add('bg-[#0D9487]', 'text-white');
         }
+        container.appendChild(btn);
       });
-
-      const nextBtn = document.getElementById('nextBtn');
-      const ready = state.entertainmentType.length > 0 && state.musicStyle.length > 0 && state.djStyle.length > 0 && state.equipment.length > 0;
-      nextBtn.disabled = !ready;
-      nextBtn.className = ready
-        ? 'px-6 py-3 bg-[#0D9487] text-white font-semibold rounded-full cursor-pointer'
-        : 'px-6 py-3 bg-gray-400 text-white font-semibold rounded-full cursor-not-allowed';
     }
 
-    renderPills('entertainmentType', categories.entertainmentType);
-    renderPills('musicStyle', categories.musicStyle, 5);
-    renderPills('djStyle', categories.djStyle, 5);
-    renderPills('equipment', categories.equipment);
-    updateUI();
+    function validateNext() {
+      const allFilled = Object.keys(sections).every(key => selected[key].length > 0);
+      nextBtn.disabled = !allFilled;
+      nextBtn.className = allFilled ? 'bg-[#0D9487] text-white px-6 py-3 rounded-full font-semibold' : 'bg-gray-400 text-white px-6 py-3 rounded-full font-semibold';
+    }
 
+    Object.keys(sections).forEach(key => renderPills(key, sections[key]));
+
+    // AI Help Button Logic
     const aiHelpBtn = document.getElementById('aiHelpBtn');
+    const undoBtn = document.getElementById('undoBtn');
+    const descriptionBox = document.getElementById('description');
     const aiIcon = document.getElementById('aiIcon');
     const aiLabel = document.getElementById('aiLabel');
-    const descriptionBox = document.getElementById('description');
     let aiOriginalText = '';
 
     aiHelpBtn.addEventListener('click', () => {
@@ -161,11 +161,18 @@
       aiLabel.textContent = 'Generating...';
 
       setTimeout(() => {
-        descriptionBox.value = 'A vibrant Thursday evening crowd with young professionals, upbeat and modern vibes.';
+        descriptionBox.value = "Thursday evening, mostly young professionals...";
         aiIcon.className = '';
         aiIcon.innerHTML = '✨';
         aiLabel.textContent = 'Help with AI';
+        undoBtn.classList.remove('hidden');
       }, 1500);
+    });
+
+    undoBtn.addEventListener('click', () => {
+      descriptionBox.value = aiOriginalText;
+      aiOriginalText = '';
+      undoBtn.classList.add('hidden');
     });
   </script>
 </body>
