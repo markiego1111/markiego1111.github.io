@@ -147,7 +147,11 @@
 </div>
 
   <!-- ===== NEXT BUTTON ===== -->
-  <button id="nextBtn" class="button primary disabled" disabled>Next</button>
+  <button id="nextBtn" class="button primary disabled" disabled>Summarise</button>
+  <div id="summaryOutput" style="margin-top: 1rem; font-size: 1rem;"></div>
+
+  // ===== SETUP SUMMARY BUTTON CLICK HANDLER =====
+document.getElementById("nextBtn").addEventListener("click", generateSummary);
 
   <!-- ===== SCRIPT SECTION START ===== -->
   <script>
@@ -235,7 +239,30 @@
         next.disabled = true;
       }
     }
+// ===== GENERATE SUMMARY OUTPUT =====
+function generateSummary() {
+  const summaryBox = document.getElementById("summaryOutput");
+  const date = document.getElementById("date").value;
+  const time = document.getElementById("time").value;
+  const entertainment = selectedEntertainment || "N/A";
+  const music = selectedMusic.join(", ") || "N/A";
+  const dj = selectedDJ.join(", ") || "N/A";
+  const description = document.getElementById("description").value.trim() || "N/A";
 
+  const formattedDate = date
+    ? new Date(date).toLocaleDateString("en-GB", { weekday: 'short', day: 'numeric', month: 'short' })
+    : "N/A";
+
+  summaryBox.innerHTML = `
+    <div><strong>Listing:</strong> ${description.split("\n")[0]}</div>
+    <div><strong>Date:</strong> ${formattedDate}</div>
+    <div><strong>Time:</strong> ${time || "N/A"}</div>
+    <div><strong>Act Type:</strong> ${entertainment}</div>
+    <div><strong>Music Style:</strong> ${music}</div>
+    <div><strong>DJ Style:</strong> ${dj}</div>
+    <div><strong>Description:</strong> ${description}</div>
+  `;
+}
     // ===== AI GENERATE DESCRIPTION BUTTON =====
     function generateAI() {
       originalDescription = document.getElementById("description").value;
@@ -255,7 +282,9 @@
       renderPills("dj", djStyles, selectedDJ, makeToggleCallback(getSelectedDJ, setSelectedDJ, maxDJ));
       renderPills("equipment", equipmentOptions, selectedEquipment, toggleEquipment);
     }
-
+    // ===== SETUP SUMMARY BUTTON CLICK HANDLER =====
+    document.getElementById("nextBtn").addEventListener("click", generateSummary);
+    
     // ===== INITIAL RENDER ON LOAD =====
     renderAll();
 
