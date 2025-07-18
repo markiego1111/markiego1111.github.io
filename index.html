@@ -50,6 +50,22 @@
       cursor: pointer;
       margin: 0.5rem 0.5rem 1rem 0;
     }
+    .spinner {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid #fff;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
     .primary {
       background-color: #0B978A;
       color: white;
@@ -120,7 +136,9 @@
   <h2>Describe your event</h2>
   <span class="text-muted">Things to include:</span> What's the occasion?, Who's the crowd?, What's the vibe?, Any music genres you don't want played?
   <div class="ai-buttons">
-    <button class="button primary" onclick="generateAI()">✨ Help with AI</button>
+    <button class="button primary" onclick="generateAI()" id="aiButton">
+  <span id="aiIcon">✨</span> Help with AI
+</button>
     <button class="button secondary" id="restoreBtn" onclick="restoreOriginal()" style="display:none">Restore Original</button>
   </div>
   <div style="padding-right: 2rem;">
@@ -249,6 +267,8 @@
       const music = selectedMusic.join(", ");
       const dj = selectedDJ.join(", ");
       const userText = descriptionBox.value;
+      const aiIcon = document.getElementById("aiIcon");
+aiIcon.innerHTML = `<span class="spinner"></span>`;
 
       const prompt = `
 You are generating event listings for a professional entertainment booking app.
@@ -290,10 +310,12 @@ User Description: ${userText || "*None*"}
             descriptionBox.value = "Apologies, can't connect right now. Please try later.";
           }
           restoreBtn.style.display = "inline-block";
+          aiIcon.innerHTML = "✨"; // <--- Add this
         })
         .catch(error => {
           console.error("Gemini API error:", error);
           descriptionBox.value = "Apologies, can't connect right now. Please try later.";
+          aiIcon.innerHTML = "✨"; // <--- Add this
         });
     }
   </script>
