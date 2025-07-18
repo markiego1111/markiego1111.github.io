@@ -246,18 +246,27 @@ function generateSummary() {
   const dj = selectedDJ.join(", ") || "N/A";
   const description = document.getElementById("description").value.trim() || "N/A";
 
+const description = document.getElementById("description").value.trim() || "N/A";
+
+// ===== SANITIZE DESCRIPTION TO EXTRACT CLEAN LISTING & BODY =====
+const listingLine = description.replace(/\*\*Title:\*\*\s*/i, "").split("\n")[0];
+const bodyText = description
+  .replace(/\*\*Title:\*\*.*?\n?/i, "")   // remove title line entirely
+  .replace(/\*\*Description:\*\*\s*/i, "") // remove description heading
+  .trim();
+  
   const formattedDate = date
     ? new Date(date).toLocaleDateString("en-GB", { weekday: 'short', day: 'numeric', month: 'short' })
     : "N/A";
 
   summaryBox.innerHTML = `
-    <div><strong>Listing:</strong> ${description.split("\n")[0]}</div>
+    <div><strong>Listing:</strong> ${listingLine}</div>
     <div><strong>Date:</strong> ${formattedDate}</div>
     <div><strong>Time:</strong> ${time || "N/A"}</div>
     <div><strong>Act Type:</strong> ${entertainment}</div>
     <div><strong>Music Style:</strong> ${music}</div>
     <div><strong>DJ Style:</strong> ${dj}</div>
-    <div><strong>Description:</strong> ${description}</div>
+    <div><strong>Description:</strong> ${bodyText}</div>
   `;
 }
     // ===== AI GENERATE DESCRIPTION BUTTON =====
