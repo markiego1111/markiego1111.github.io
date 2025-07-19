@@ -51,21 +51,21 @@
       margin: 0.5rem 0.5rem 1rem 0;
     }
     .spinner {
-  display: inline-block;
-  width: 1rem;
-  height: 1rem;
-  border: 2px solid #fff;
-  border-top: 2px solid transparent;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  vertical-align: middle;
-  margin-right: 4px;
-}
+      display: inline-block;
+      width: 1rem;
+      height: 1rem;
+      border: 2px solid #fff;
+      border-top: 2px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      vertical-align: middle;
+      margin-right: 4px;
+    }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
     .primary {
       background-color: #0B978A;
       color: white;
@@ -150,7 +150,6 @@
   <button id="nextBtn" class="button primary disabled" disabled>Summarise</button>
   <div id="summaryOutput" style="margin-top: 1rem; font-size: 1rem;"></div>
 
-  <!-- ===== SCRIPT SECTION START ===== -->
   <script>
     // ===== CONSTANTS & STATE =====
     const entertainmentTypes = ["DJ", "Live Music", "Karaoke", "Quiz", "Tribute", "Drag", "Bingo", "Childrens Entertainer", "Bandeoke", "Magician", "Open Mic Host", "Poker", "Comedy", "Santa"];
@@ -167,7 +166,6 @@
     const maxMusic = 5;
     const maxDJ = 5;
 
-    // ===== RENDER PILLS TO DOM =====
     function renderPills(id, list, selected, callback) {
       const container = document.getElementById(id);
       container.innerHTML = "";
@@ -180,14 +178,12 @@
       });
     }
 
-    // ===== TOGGLE ENTERTAINMENT TYPE (SINGLE SELECT) =====
     function toggleEntertainment(item) {
       selectedEntertainment = selectedEntertainment === item ? null : item;
       renderAll();
       validateNext();
     }
 
-    // ===== GENERIC TOGGLE CALLBACK GENERATOR (LIMITED MULTI-SELECT) =====
     function makeToggleCallback(getter, setter, max) {
       return function(item) {
         let selectedList = getter();
@@ -203,7 +199,6 @@
       };
     }
 
-    // ===== TOGGLE EQUIPMENT OPTIONS =====
     function toggleEquipment(item) {
       if (item === "None") {
         selectedEquipment = ["None"];
@@ -219,13 +214,11 @@
       validateNext();
     }
 
-    // ===== GETTERS & SETTERS FOR MUSIC / DJ =====
     function setSelectedMusic(list) { selectedMusic = list; }
     function getSelectedMusic() { return selectedMusic; }
     function setSelectedDJ(list) { selectedDJ = list; }
     function getSelectedDJ() { return selectedDJ; }
 
-    // ===== VALIDATE NEXT BUTTON STATE =====
     function validateNext() {
       const next = document.getElementById("nextBtn");
       if (selectedEntertainment && selectedMusic.length > 0 && selectedDJ.length > 0 && selectedEquipment.length > 0) {
@@ -236,63 +229,52 @@
         next.disabled = true;
       }
     }
-// ===== GENERATE SUMMARY OUTPUT =====
-function generateSummary() {
-  const summaryBox = document.getElementById("summaryOutput");
-  const date = document.getElementById("date").value;
-  const time = document.getElementById("time").value;
-  const entertainment = selectedEntertainment || "N/A";
-  const music = selectedMusic.join(", ") || "N/A";
-  const dj = selectedDJ.join(", ") || "N/A";
-  const description = document.getElementById("description").value.trim() || "N/A";
 
-// ===== SANITIZE DESCRIPTION TO EXTRACT CLEAN LISTING & BODY =====
-const listingLine = description.replace(/\*\*Title:\*\*\s*/i, "").split("\n")[0];
-const bodyText = description
-  .replace(/\*\*Title:\*\*.*?\n?/i, "")   // remove title line entirely
-  .replace(/\*\*Description:\*\*\s*/i, "") // remove description heading
-  .trim();
-  
-  const formattedDate = date
-    ? new Date(date).toLocaleDateString("en-GB", { weekday: 'short', day: 'numeric', month: 'short' })
-    : "N/A";
+    function generateSummary() {
+      const summaryBox = document.getElementById("summaryOutput");
+      const date = document.getElementById("date").value;
+      const time = document.getElementById("time").value;
+      const entertainment = selectedEntertainment || "N/A";
+      const music = selectedMusic.join(", ") || "N/A";
+      const dj = selectedDJ.join(", ") || "N/A";
+      const description = document.getElementById("description").value.trim() || "N/A";
 
-  summaryBox.innerHTML = 
-    <div><strong>Listing:</strong> ${listingLine}</div>
-    <div><strong>Date:</strong> ${formattedDate}</div>
-    <div><strong>Time:</strong> ${time || "N/A"}</div>
-    <div><strong>Act Type:</strong> ${entertainment}</div>
-    <div><strong>Music Style:</strong> ${music}</div>
-    <div><strong>DJ Style:</strong> ${dj}</div>
-    <div><strong>Description:</strong> ${bodyText}</div>
-  ;
-}
-    // ===== AI GENERATE DESCRIPTION BUTTON =====
+      const formattedDate = date
+        ? new Date(date).toLocaleDateString("en-GB", { weekday: 'short', day: 'numeric', month: 'short' })
+        : "N/A";
+
+      summaryBox.innerHTML = `
+        <div><strong>Listing:</strong> ${description.split("\n")[0]}</div>
+        <div><strong>Date:</strong> ${formattedDate}</div>
+        <div><strong>Time:</strong> ${time || "N/A"}</div>
+        <div><strong>Act Type:</strong> ${entertainment}</div>
+        <div><strong>Music Style:</strong> ${music}</div>
+        <div><strong>DJ Style:</strong> ${dj}</div>
+        <div><strong>Description:</strong> ${description}</div>
+      `;
+    }
+
     function generateAI() {
       originalDescription = document.getElementById("description").value;
       callGeminiAI();
     }
 
-    // ===== RESTORE USER'S ORIGINAL DESCRIPTION =====
     function restoreOriginal() {
       document.getElementById("description").value = originalDescription;
       document.getElementById("restoreBtn").style.display = "none";
     }
 
-    // ===== MAIN RENDER FUNCTION =====
     function renderAll() {
       renderPills("entertainment", entertainmentTypes, selectedEntertainment ? [selectedEntertainment] : [], toggleEntertainment);
       renderPills("music", musicStyles, selectedMusic, makeToggleCallback(getSelectedMusic, setSelectedMusic, maxMusic));
       renderPills("dj", djStyles, selectedDJ, makeToggleCallback(getSelectedDJ, setSelectedDJ, maxDJ));
       renderPills("equipment", equipmentOptions, selectedEquipment, toggleEquipment);
     }
-    // ===== SETUP SUMMARY BUTTON CLICK HANDLER =====
+
     document.getElementById("nextBtn").addEventListener("click", generateSummary);
-    
-    // ===== INITIAL RENDER ON LOAD =====
+
     renderAll();
 
-    // ===== GEMINI API CALL FUNCTION =====
     function callGeminiAI() {
       const descriptionBox = document.getElementById("description");
       const restoreBtn = document.getElementById("restoreBtn");
@@ -301,7 +283,7 @@ const bodyText = description
       const dj = selectedDJ.join(", ");
       const userText = descriptionBox.value;
       const aiIcon = document.getElementById("aiIcon");
-aiIcon.innerHTML = <span class="spinner"></span>;
+      aiIcon.innerHTML = `<span class="spinner"></span>`;
 
       const prompt = `
 You are generating event listings for a professional entertainment booking app.
@@ -343,12 +325,12 @@ User Description: ${userText || "*None*"}
             descriptionBox.value = "Apologies, can't connect right now. Please try later.";
           }
           restoreBtn.style.display = "inline-block";
-          aiIcon.innerHTML = "✨"; // <--- Add this
+          aiIcon.innerHTML = "✨";
         })
         .catch(error => {
           console.error("Gemini API error:", error);
           descriptionBox.value = "Apologies, can't connect right now. Please try later.";
-          aiIcon.innerHTML = "✨"; // <--- Add this
+          aiIcon.innerHTML = "✨";
         });
     }
   </script>
