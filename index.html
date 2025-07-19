@@ -251,11 +251,17 @@ function generateSummary() {
   const titleLine = lines.find(line => line.startsWith("**Title:**"));
   const listingLine = titleLine ? titleLine.replace(/\*\*Title:\*\*\s*/i, "").trim() : "N/A";
 
-  const bodyOnly = lines.filter(line =>
-    !line.startsWith("**Title:**") &&
-    !line.startsWith("**Description:**") &&
-    line !== listingLine
-  );
+  const bodyOnly = lines.map(line => {
+  if (line.startsWith("**Description:**")) {
+    return line.replace(/\*\*Description:\*\*\s*/i, "").trim();
+  }
+  return line;
+}).filter(line =>
+  !line.startsWith("**Title:**") &&
+  line !== listingLine &&
+  line !== ""
+);
+  
   const bodyText = bodyOnly.join(" ").trim();
   
   const formattedDate = date
