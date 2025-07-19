@@ -245,11 +245,15 @@ function generateSummary() {
   const music = selectedMusic.join(", ") || "N/A";
   const dj = selectedDJ.join(", ") || "N/A";
   const description = document.getElementById("description").value.trim() || "N/A";
-
-  // ===== SANITIZE DESCRIPTION TO EXTRACT CLEAN LISTING & BODY =====
+  
+// ===== SANITIZE DESCRIPTION TO EXTRACT LISTING + BODY ONLY =====
 const lines = description.split("\n").map(line => line.trim()).filter(Boolean);
 const listingLine = lines.length > 0 ? lines[0] : "N/A";
 const bodyText = lines.slice(1).join(" ").trim();
+
+// Music & DJ pills are kept intact:
+const music = selectedMusic.length ? selectedMusic.join(", ") : "N/A";
+const dj = selectedDJ.length ? selectedDJ.join(", ") : "N/A";
 
   const bodyOnly = lines.map(line => {
   if (line.startsWith("**Description:**")) {
