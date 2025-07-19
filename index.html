@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- ===== META & STYLE DEFINITIONS ===== -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Event UK: Source Entertainment Simulator</title>
@@ -13,8 +12,10 @@
       background: #fff;
     }
     h1 { font-size: 2rem; }
-    h2 { margin-top: 2rem; font-size: 1.3rem; }
-    .section { margin-bottom: 1.5rem; }
+    h2 { margin-top: 2rem;
+      font-size: 1.3rem; }
+    .section { margin-bottom: 1.5rem;
+    }
 
     /* ===== PILL SELECTOR STYLING ===== */
     .pill {
@@ -63,8 +64,10 @@
     }
 
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      0% { transform: rotate(0deg);
+      }
+      100% { transform: rotate(360deg);
+      }
     }
     .primary {
       background-color: #0B978A;
@@ -97,45 +100,39 @@
   </style>
 </head>
 <body>
-  <!-- ===== PAGE HEADER ===== -->
   <h1>Event UK: Source Entertainment Simulator</h1>
 
-  <!-- ===== ENTERTAINMENT TYPE SECTION ===== -->
   <div class="section">
     <h2>Entertainment Type</h2>
     <div id="entertainment"></div>
   </div>
 
-  <!-- ===== DATE & TIME PICKER SECTION ===== -->
   <div class="section">
     <h2>Select Date & Time</h2>
     <input type="date" id="date" class="pill" />
     <input type="time" id="time" class="pill" />
   </div>
 
-  <!-- ===== MUSIC STYLE SELECTION ===== -->
   <div class="section">
     <h2>Music Style (up to 5)</h2>
-    <div id="music"></div>
+    <div
+ id="music"></div>
   </div>
 
-  <!-- ===== DJ STYLE SELECTION ===== -->
   <div class="section">
     <h2>DJ Style (up to 5)</h2>
     <div id="dj"></div>
   </div>
 
-  <!-- ===== EQUIPMENT SELECTION ===== -->
   <div class="section">
     <h2>Equipment</h2>
     <div id="equipment"></div>
   </div>
 
-  <!-- ===== USER DESCRIPTION + AI BUTTONS ===== -->
-<div class="section">
+  <div class="section">
   <h2>Describe your event</h2>
   <span class="text-muted">Things to include:</span> What's the occasion?, Who's the crowd?, What's the vibe?, Any music genres you don't want played?
-  <div class="ai-buttons">
+ <div class="ai-buttons">
     <button class="button primary" onclick="generateAI()" id="aiButton">
   <span id="aiIcon">✨</span> Help with AI
 </button>
@@ -146,29 +143,28 @@
   </div>
 </div>
 
-  <!-- ===== NEXT BUTTON ===== -->
   <button id="nextBtn" class="button primary disabled" disabled>Summarise</button>
   <div id="summaryOutput" style="margin-top: 1rem; font-size: 1rem;"></div>
 
   <script>
     // ===== CONSTANTS & STATE =====
     const entertainmentTypes = ["DJ", "Live Music", "Karaoke", "Quiz", "Tribute", "Drag", "Bingo", "Childrens Entertainer", "Bandeoke", "Magician", "Open Mic Host", "Poker", "Comedy", "Santa"];
-    const musicStyles = ["70s", "80s", "90s", "00s", "Current Hits", "Britpop", "Dance", "Disco", "Electronic", "Funk", "Hip Hop", "House", "Indie", "Motown", "Pop", "R&B", "Rock", "Soul"];
-    const djStyles = ["Personality DJ", "No Mic Work", "Some Mic Work", "No Requests", "Take Requests", "Beat Mixing", "Keep 'em Singing", "Keep 'em Dancing", "Older Audience", "Younger Audience"];
-    const equipmentOptions = ["Laptop, Decks & Mixer", "PA System", "Lights", "Full Mobile Rig","None"];
+ const musicStyles = ["70s", "80s", "90s", "00s", "Current Hits", "Britpop", "Dance", "Disco", "Electronic", "Funk", "Hip Hop", "House", "Indie", "Motown", "Pop", "R&B", "Rock", "Soul"];
+ const djStyles = ["Personality DJ", "No Mic Work", "Some Mic Work", "No Requests", "Take Requests", "Beat Mixing", "Keep 'em Singing", "Keep 'em Dancing", "Older Audience", "Younger Audience"];
+ const equipmentOptions = ["Laptop, Decks & Mixer", "PA System", "Lights", "Full Mobile Rig","None"];
 
     let selectedEntertainment = null;
-    let selectedMusic = [];
+ let selectedMusic = [];
     let selectedDJ = [];
     let selectedEquipment = [];
     let originalDescription = "";
 
     const maxMusic = 5;
-    const maxDJ = 5;
+ const maxDJ = 5;
 
     function renderPills(id, list, selected, callback) {
       const container = document.getElementById(id);
-      container.innerHTML = "";
+ container.innerHTML = "";
       list.forEach(item => {
         const pill = document.createElement("div");
         pill.className = "pill" + (selected.includes(item) ? " selected" : "");
@@ -176,10 +172,11 @@
         pill.onclick = () => callback(item);
         container.appendChild(pill);
       });
-    }
+ }
 
     function toggleEntertainment(item) {
-      selectedEntertainment = selectedEntertainment === item ? null : item;
+      selectedEntertainment = selectedEntertainment === item ?
+ null : item;
       renderAll();
       validateNext();
     }
@@ -187,89 +184,99 @@
     function makeToggleCallback(getter, setter, max) {
       return function(item) {
         let selectedList = getter();
-        const index = selectedList.indexOf(item);
+ const index = selectedList.indexOf(item);
         if (index >= 0) {
           selectedList.splice(index, 1);
-        } else if (selectedList.length < max) {
+ } else if (selectedList.length < max) {
           selectedList.push(item);
-        }
+ }
         setter([...selectedList]);
         renderAll();
         validateNext();
       };
-    }
+ }
 
     function toggleEquipment(item) {
       if (item === "None") {
         selectedEquipment = ["None"];
-      } else {
+ } else {
         selectedEquipment = selectedEquipment.filter(i => i !== "None");
-        if (selectedEquipment.includes(item)) {
+ if (selectedEquipment.includes(item)) {
           selectedEquipment = selectedEquipment.filter(i => i !== item);
-        } else {
+ } else {
           selectedEquipment.push(item);
-        }
+ }
       }
       renderAll();
       validateNext();
-    }
+ }
 
     function setSelectedMusic(list) { selectedMusic = list; }
-    function getSelectedMusic() { return selectedMusic; }
+    function getSelectedMusic() { return selectedMusic;
+ }
     function setSelectedDJ(list) { selectedDJ = list; }
-    function getSelectedDJ() { return selectedDJ; }
+    function getSelectedDJ() { return selectedDJ;
+ }
 
     function validateNext() {
-      const next = document.getElementById("nextBtn");
-      if (selectedEntertainment && selectedMusic.length > 0 && selectedDJ.length > 0 && selectedEquipment.length > 0) {
-        next.classList.remove("disabled");
-        next.disabled = false;
-      } else {
-        next.classList.add("disabled");
-        next.disabled = true;
-      }
-    }
-
+  const next = document.getElementById("nextBtn");
+  if (selectedEntertainment) {
+    next.classList.remove("disabled");
+    next.disabled = false;
+  } else {
+    next.classList.add("disabled");
+    next.disabled = true;
+  }
+}
     function generateSummary() {
       const summaryBox = document.getElementById("summaryOutput");
+      const descriptionBox = document.getElementById("description"); // Get descriptionBox for data attributes
       const date = document.getElementById("date").value;
       const time = document.getElementById("time").value;
       const entertainment = selectedEntertainment || "N/A";
       const music = selectedMusic.join(", ") || "N/A";
       const dj = selectedDJ.join(", ") || "N/A";
-      const description = document.getElementById("description").value.trim() || "N/A";
+
+      // Retrieve clean title and description from data attributes
+      const listingTitle = descriptionBox.dataset.fullTitle || "N/A";
+      const descriptionOnly = descriptionBox.dataset.fullDescription || "N/A";
 
       const formattedDate = date
-        ? new Date(date).toLocaleDateString("en-GB", { weekday: 'short', day: 'numeric', month: 'short' })
+        ?
+ new Date(date).toLocaleDateString("en-GB", { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })
         : "N/A";
-
-      summaryBox.innerHTML = `
-        <div><strong>Listing:</strong> ${description.split("\n")[0]}</div>
+ summaryBox.innerHTML = `
+        <div><strong>Listing:</strong> ${listingTitle}</div>
         <div><strong>Date:</strong> ${formattedDate}</div>
-        <div><strong>Time:</strong> ${time || "N/A"}</div>
+        <div><strong>Time:</strong> ${time ||
+ "N/A"}</div>
         <div><strong>Act Type:</strong> ${entertainment}</div>
         <div><strong>Music Style:</strong> ${music}</div>
         <div><strong>DJ Style:</strong> ${dj}</div>
-        <div><strong>Description:</strong> ${description}</div>
+        <div><strong>Description:</strong> ${descriptionOnly}</div>
       `;
-    }
+ }
 
     function generateAI() {
       originalDescription = document.getElementById("description").value;
       callGeminiAI();
-    }
+ }
 
     function restoreOriginal() {
       document.getElementById("description").value = originalDescription;
       document.getElementById("restoreBtn").style.display = "none";
-    }
+      // Clear data attributes when restoring original description
+      const descriptionBox = document.getElementById("description");
+      descriptionBox.removeAttribute('data-full-title');
+      descriptionBox.removeAttribute('data-full-description');
+ }
 
     function renderAll() {
       renderPills("entertainment", entertainmentTypes, selectedEntertainment ? [selectedEntertainment] : [], toggleEntertainment);
       renderPills("music", musicStyles, selectedMusic, makeToggleCallback(getSelectedMusic, setSelectedMusic, maxMusic));
-      renderPills("dj", djStyles, selectedDJ, makeToggleCallback(getSelectedDJ, setSelectedDJ, maxDJ));
+      renderPills("dj", djStyles, selectedDJ, makeToggleCallback(getSelectedDJ, setSelectedDJ, maxDJ)); // Corrected this line
       renderPills("equipment", equipmentOptions, selectedEquipment, toggleEquipment);
-    }
+ }
 
     document.getElementById("nextBtn").addEventListener("click", generateSummary);
 
@@ -277,23 +284,24 @@
 
     function callGeminiAI() {
       const descriptionBox = document.getElementById("description");
-      const restoreBtn = document.getElementById("restoreBtn");
+ const restoreBtn = document.getElementById("restoreBtn");
       const entertainment = selectedEntertainment;
       const music = selectedMusic.join(", ");
       const dj = selectedDJ.join(", ");
-      const userText = descriptionBox.value;
+ const userText = descriptionBox.value;
       const aiIcon = document.getElementById("aiIcon");
       aiIcon.innerHTML = `<span class="spinner"></span>`;
-
-      const prompt = `
+ const prompt = `
 You are generating event listings for a professional entertainment booking app.
-Based on the input provided, generate:
-1. A title (max 110 characters) – clear, professional, and punchy
-2. A description – factual, concise, and informative
+Based on the inputs provided generate a response that consist exactly of two lines:
+The first line must be the title (max 110 charcters), starting with "TITLE: " - the title should be clear, professional and punchy.
+The second line must be the description, starting with "DESCRIPTION: " - the description should be factual, concise, and informative.
+Do NOT include any other text, additional options, explanations, or formatting like bolding.
 
 Do NOT make assumptions about the venue, crowd, or vibe unless explicitly stated. Do not repeat the event date, time, price, or location unless included in user-provided description. Only use fields that are present; never show placeholders or undefined values. Default to clarity over flair, be specific, not vague. Mention music genres or styles where relevant. Keep tone professional but engaging.
 
 Lean towards what kind of act the venue is seeking in terms of style, flexibility, energy, or practical requirements. Use terms like 'looking for','in need of', 'we're seeking', 'we're after'. Highlight performance needs if implied. Avoid vague generalities.
+
 
 Use all available inputs:
 • entertainment type
@@ -308,8 +316,7 @@ Music Style: ${music}
 DJ Style: ${dj}
 User Description: ${userText || "*None*"}
 `;
-
-      fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyCjhJ5X8zIbe4Q95jVTtfRLbHFiHfjEJ_E", {
+ fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyCjhJ5X8zIbe4Q95jVTtfRLbHFiHfjEJ_E", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -319,20 +326,48 @@ User Description: ${userText || "*None*"}
         .then(res => res.json())
         .then(data => {
           const text = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+     
           if (text && text.length > 0) {
-            descriptionBox.value = text;
+            let parsedTitle = "N/A";
+            let parsedDescription = "N/A";
+
+            // Parse TITLE: and DESCRIPTION: from the AI's response
+            const lines = text.split('\n').map(line => line.trim());
+            
+            const titleLine = lines.find(line => line.startsWith('TITLE: '));
+            if (titleLine) {
+              parsedTitle = titleLine.substring('TITLE: '.length).trim();
+            }
+
+            const descriptionLine = lines.find(line => line.startsWith('DESCRIPTION: '));
+            if (descriptionLine) {
+              parsedDescription = descriptionLine.substring('DESCRIPTION: '.length).trim();
+            }
+
+            // Update the textarea with only the parsed description
+            descriptionBox.value = parsedDescription;
+            
+            // Store the parsed title and description in data attributes for summary generation
+            descriptionBox.setAttribute('data-full-title', parsedTitle);
+            descriptionBox.setAttribute('data-full-description', parsedDescription);
+
           } else {
             descriptionBox.value = "Apologies, can't connect right now. Please try later.";
+            descriptionBox.removeAttribute('data-full-title');
+            descriptionBox.removeAttribute('data-full-description');
           }
           restoreBtn.style.display = "inline-block";
           aiIcon.innerHTML = "✨";
-        })
+        
+ })
         .catch(error => {
           console.error("Gemini API error:", error);
           descriptionBox.value = "Apologies, can't connect right now. Please try later.";
+          descriptionBox.removeAttribute('data-full-title');
+          descriptionBox.removeAttribute('data-full-description');
           aiIcon.innerHTML = "✨";
         });
-    }
+ }
   </script>
 </body>
 </html>
