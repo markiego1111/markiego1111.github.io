@@ -245,39 +245,19 @@ function generateSummary() {
   const music = selectedMusic.join(", ") || "N/A";
   const dj = selectedDJ.join(", ") || "N/A";
   const description = document.getElementById("description").value.trim() || "N/A";
-  
+
 // ===== SANITIZE DESCRIPTION TO EXTRACT CLEAN LISTING & BODY =====
-const lines = description.split("\n").map(line => line.trim());
-const titleLine = lines.find(line => line.startsWith("**Title:**"));
-const listingLine = titleLine
-  ? titleLine.replace(/\*\*Title:\*\*\s*/i, "").trim()
-  : (lines[0] || "N/A"); // fallback: first line as title
-
-const bodyOnly = lines.filter(line =>
-  !line.startsWith("**Title:**") &&
-  !line.startsWith("**Description:**") &&
-  line !== titleLine
-);
-
-const bodyText = bodyOnly.join(" ").trim();
-  const bodyOnly = lines.map(line => {
-  if (line.startsWith("**Description:**")) {
-    return line.replace(/\*\*Description:\*\*\s*/i, "").trim();
-  }
-  return line;
-}).filter(line =>
-  !line.startsWith("**Title:**") &&
-  line !== listingLine &&
-  line !== ""
-);
-  
-  const bodyText = bodyOnly.join(" ").trim();
+const listingLine = description.replace(/\*\*Title:\*\*\s*/i, "").split("\n")[0];
+const bodyText = description
+  .replace(/\*\*Title:\*\*.*?\n?/i, "")   // remove title line entirely
+  .replace(/\*\*Description:\*\*\s*/i, "") // remove description heading
+  .trim();
   
   const formattedDate = date
-    ? new Date(date).toLocaleDateString("en-GB", { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })
+    ? new Date(date).toLocaleDateString("en-GB", { weekday: 'short', day: 'numeric', month: 'short' })
     : "N/A";
 
-  summaryBox.innerHTML = `
+  summaryBox.innerHTML = 
     <div><strong>Listing:</strong> ${listingLine}</div>
     <div><strong>Date:</strong> ${formattedDate}</div>
     <div><strong>Time:</strong> ${time || "N/A"}</div>
@@ -285,7 +265,7 @@ const bodyText = bodyOnly.join(" ").trim();
     <div><strong>Music Style:</strong> ${music}</div>
     <div><strong>DJ Style:</strong> ${dj}</div>
     <div><strong>Description:</strong> ${bodyText}</div>
-  `;
+  ;
 }
     // ===== AI GENERATE DESCRIPTION BUTTON =====
     function generateAI() {
@@ -321,20 +301,15 @@ const bodyText = bodyOnly.join(" ").trim();
       const dj = selectedDJ.join(", ");
       const userText = descriptionBox.value;
       const aiIcon = document.getElementById("aiIcon");
-aiIcon.innerHTML = `<span class="spinner"></span>`;
+aiIcon.innerHTML = <span class="spinner"></span>;
 
       const prompt = `
 You are generating event listings for a professional entertainment booking app.
-
-Output format:
-**Title:** [Your generated title on a single line]  
-**Description:** [Your generated description on a separate line or lines]
-
 Based on the input provided, generate:
 1. A title (max 110 characters) – clear, professional, and punchy
 2. A description – factual, concise, and informative
 
-Do NOT make assumptions about the venue, crowd, or vibe unless explicitly stated. Do not repeat the event date, time, price, or location unless included in user-provided description. Only use fields that are present; never show placeholders or undefined values. Default to clarity over flair, be specific, not vague. Mention music genres or styles where relevant. Keep tone professional but engaging.
+Do NOT assumptions about the venue, crowd, or vibe unless explicitly stated. Do not repeat the event date, time, price, or location unless included in user-provided description. Only use fields that are present; never show placeholders or undefined values. Default to clarity over flair, be specific, not vague. Mention music genres or styles where relevant. Keep tone professional but engaging.
 
 Lean towards what kind of act the venue is seeking in terms of style, flexibility, energy, or practical requirements. Highlight performance needs if implied. Avoid vague generalities.
 
@@ -363,15 +338,10 @@ User Description: ${userText || "*None*"}
         .then(data => {
           const text = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
           if (text && text.length > 0) {
-  const cleanText = text
-    .replace(/\*\*Title:\*\*.*?\n*/i, "")
-    .replace(/\*\*Description:\*\*\s*/i, "")
-    .trim();
-
-  descriptionBox.value = cleanText;
-} else {
-  descriptionBox.value = "Apologies, can't connect right now. Please try later.";
-}
+            descriptionBox.value = text;
+          } else {
+            descriptionBox.value = "Apologies, can't connect right now. Please try later.";
+          }
           restoreBtn.style.display = "inline-block";
           aiIcon.innerHTML = "✨"; // <--- Add this
         })
