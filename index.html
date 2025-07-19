@@ -325,7 +325,7 @@ Based on the input provided, generate:
 1. A title (max 110 characters) – clear, professional, and punchy
 2. A description – factual, concise, and informative
 
-Do NOT assumptions about the venue, crowd, or vibe unless explicitly stated. Do not repeat the event date, time, price, or location unless included in user-provided description. Only use fields that are present; never show placeholders or undefined values. Default to clarity over flair, be specific, not vague. Mention music genres or styles where relevant. Keep tone professional but engaging.
+Do NOT make assumptions about the venue, crowd, or vibe unless explicitly stated. Do not repeat the event date, time, price, or location unless included in user-provided description. Only use fields that are present; never show placeholders or undefined values. Default to clarity over flair, be specific, not vague. Mention music genres or styles where relevant. Keep tone professional but engaging.
 
 Lean towards what kind of act the venue is seeking in terms of style, flexibility, energy, or practical requirements. Highlight performance needs if implied. Avoid vague generalities.
 
@@ -354,10 +354,15 @@ User Description: ${userText || "*None*"}
         .then(data => {
           const text = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
           if (text && text.length > 0) {
-            descriptionBox.value = text;
-          } else {
-            descriptionBox.value = "Apologies, can't connect right now. Please try later.";
-          }
+  const cleanText = text
+    .replace(/\*\*Title:\*\*.*?\n*/i, "")
+    .replace(/\*\*Description:\*\*\s*/i, "")
+    .trim();
+
+  descriptionBox.value = cleanText;
+} else {
+  descriptionBox.value = "Apologies, can't connect right now. Please try later.";
+}
           restoreBtn.style.display = "inline-block";
           aiIcon.innerHTML = "✨"; // <--- Add this
         })
