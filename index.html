@@ -246,8 +246,6 @@ function generateSummary() {
   const dj = selectedDJ.join(", ") || "N/A";
   const description = document.getElementById("description").value.trim() || "N/A";
 
-const description = document.getElementById("description").value.trim() || "N/A";
-
 // ===== SANITIZE DESCRIPTION TO EXTRACT CLEAN LISTING & BODY =====
 const listingLine = description.replace(/\*\*Title:\*\*\s*/i, "").split("\n")[0];
 const bodyText = description
