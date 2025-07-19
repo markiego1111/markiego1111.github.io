@@ -246,15 +246,20 @@ function generateSummary() {
   const dj = selectedDJ.join(", ") || "N/A";
   const description = document.getElementById("description").value.trim() || "N/A";
   
-// ===== SANITIZE DESCRIPTION TO EXTRACT LISTING + BODY ONLY =====
-const lines = description.split("\n").map(line => line.trim()).filter(Boolean);
-const listingLine = lines.length > 0 ? lines[0] : "N/A";
-const bodyText = lines.slice(1).join(" ").trim();
+// ===== SANITIZE DESCRIPTION TO EXTRACT CLEAN LISTING & BODY =====
+const lines = description.split("\n").map(line => line.trim());
+const titleLine = lines.find(line => line.startsWith("**Title:**"));
+const listingLine = titleLine
+  ? titleLine.replace(/\*\*Title:\*\*\s*/i, "").trim()
+  : (lines[0] || "N/A"); // fallback: first line as title
 
-// Music & DJ pills are kept intact:
-const music = selectedMusic.length ? selectedMusic.join(", ") : "N/A";
-const dj = selectedDJ.length ? selectedDJ.join(", ") : "N/A";
+const bodyOnly = lines.filter(line =>
+  !line.startsWith("**Title:**") &&
+  !line.startsWith("**Description:**") &&
+  line !== titleLine
+);
 
+const bodyText = bodyOnly.join(" ").trim();
   const bodyOnly = lines.map(line => {
   if (line.startsWith("**Description:**")) {
     return line.replace(/\*\*Description:\*\*\s*/i, "").trim();
