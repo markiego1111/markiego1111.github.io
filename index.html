@@ -246,15 +246,20 @@ function generateSummary() {
   const dj = selectedDJ.join(", ") || "N/A";
   const description = document.getElementById("description").value.trim() || "N/A";
 
-// ===== SANITIZE DESCRIPTION TO EXTRACT CLEAN LISTING & BODY =====
-const listingLine = description.replace(/\*\*Title:\*\*\s*/i, "").split("\n")[0];
-const bodyText = description
-  .replace(/\*\*Title:\*\*.*?\n?/i, "")   // remove title line entirely
-  .replace(/\*\*Description:\*\*\s*/i, "") // remove description heading
-  .trim();
+  // ===== SANITIZE DESCRIPTION TO EXTRACT CLEAN LISTING & BODY =====
+  const lines = description.split("\n").map(line => line.trim());
+  const titleLine = lines.find(line => line.startsWith("**Title:**"));
+  const listingLine = titleLine ? titleLine.replace(/\*\*Title:\*\*\s*/i, "").trim() : "N/A";
+
+  const bodyOnly = lines.filter(line =>
+    !line.startsWith("**Title:**") &&
+    !line.startsWith("**Description:**") &&
+    line !== listingLine
+  );
+  const bodyText = bodyOnly.join(" ").trim();
   
   const formattedDate = date
-    ? new Date(date).toLocaleDateString("en-GB", { weekday: 'short', day: 'numeric', month: 'short' })
+    ? new Date(date).toLocaleDateString("en-GB", { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })
     : "N/A";
 
   summaryBox.innerHTML = `
